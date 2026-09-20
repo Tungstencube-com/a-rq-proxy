@@ -1,0 +1,11 @@
+{
+  "name": "scramjet-templates",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "start:html": "node server.js"
+  },
+  "dependencies": {
+    "@mercuryworkshop/wisp-js": "^0.5.0"
+  }
+}

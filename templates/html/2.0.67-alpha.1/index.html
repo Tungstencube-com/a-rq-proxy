@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAPTOR - Easy And Engagin Math | k-12!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="icon" type="image/png" href="./favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            color-scheme: dark;
+            --ink: #44de53;
+            --muted: #9bb8a4;
+            --line: rgba(119, 170, 125, 0.42);
+            --surface: rgba(6, 20, 12, 0.76);
+            --accent: #d7f4d9;
+            --accent-dark: #bfe7c0;
+        }
+
+        body {
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            background: #071a12;
+            color: var(--ink);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        body:not(.is-ready) .container {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .container {
+            transition: opacity 0.18s ease;
+        }
+
+        .home {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: radial-gradient(circle at 50% 38%, #103126 0, #071a12 34%, #020b07 72%);
+            isolation: isolate;
+        }
+
+        .home::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(2, 14, 8, 0.02), rgba(2, 14, 8, 0.02)), url("https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=2400&q=80");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 1;
+            z-index: -1;
+        }
+
+        .home-main {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 20px 22vh;
+        }
+
+        .home-content {
+            width: min(680px, 100%);
+            text-align: center;
+        }
+
+        .brand {
+            margin-bottom: 34px;
+            color: var(--ink);
+            font-family: "Jaro", sans-serif;
+            font-size: clamp(76px, 15vw, 136px);
+            font-weight: 400;
+            letter-spacing: 2px;
+            line-height: 0.9;
+        }
+
+        .brand span {
+            color: #ffffff;
+        }
+
+        .search-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            min-height: 56px;
+            padding: 6px 8px 6px 20px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: rgba(5, 18, 11, 0.28);
+            box-shadow: 0 0 30px rgba(156, 217, 168, 0.05), 0 12px 36px rgba(0, 0, 0, 0.55);
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        .search-wrap:focus-within {
+            border-color: rgba(182, 224, 184, 0.7);
+            box-shadow: 0 0 22px rgba(156, 217, 168, 0.16), 0 12px 36px rgba(0, 0, 0, 0.7);
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: var(--ink);
+            font: inherit;
+            font-size: 16px;
+        }
+
+        .search-wrap button {
+            min-height: 42px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #d6f4d8, #9ad6a2);
+            color: #062b14;
+            cursor: pointer;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            transition: filter 0.2s, transform 0.2s;
+        }
+
+        .search-wrap button:hover {
+            filter: brightness(1.05);
+        }
+
+        .search-wrap button:active {
+            transform: translateY(1px);
+        }
+
+        .toolbar {
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 10;
+            background: rgba(4, 15, 10, 0.9);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .dock {
+            position: fixed;
+            left: 50%;
+            bottom: 22px;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border: 1px solid rgba(112, 255, 128, 0.72);
+            border-radius: 999px;
+            background: rgba(66, 126, 75, 0.2);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            box-shadow: 0 0 7px rgba(92, 255, 112, 0.72), 0 0 26px rgba(104, 222, 119, 0.46), 0 12px 26px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(224, 255, 227, 0.18);
+            transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.35s ease;
+        }
+
+        .dock.is-hidden {
+            opacity: 0;
+            transform: translate(-50%, 120px);
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .dock-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: rgba(142, 218, 148, 0.1);
+            border: 1px solid rgba(151, 255, 164, 0.58);
+            color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 5px rgba(104, 255, 121, 0.58), 0 0 16px rgba(104, 222, 119, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .dock-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(115, 202, 126, 0.16);
+            border-color: rgba(180, 255, 190, 0.86);
+            box-shadow: 0 0 8px rgba(120, 255, 133, 0.86), 0 0 22px rgba(120, 238, 133, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 8px 18px rgba(0, 0, 0, 0.12);
+        }
+
+        .dock-btn.is-active {
+            background: rgba(115, 202, 126, 0.18);
+            border-color: rgba(194, 255, 201, 0.92);
+            box-shadow: 0 0 8px rgba(108, 255, 138, 0.8), 0 0 20px rgba(108, 219, 138, 0.56), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        .toolbar.hidden,
+        .browser-frame.hidden,
+        .browser-frames.hidden,
+        .home.hidden,
+        .app-page.hidden {
+            display: none;
+        }
+
+        .app-page {
+            position: relative;
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            height: 100vh;
+            align-items: flex-start;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 48px 24px 150px;
+            background: radial-gradient(circle at 50% 38%, #103126 0, #071a12 42%, #020b07 100%);
+            isolation: isolate;
+        }
+
+        .page-content {
+            width: min(1440px, 100%);
+            text-align: center;
+        }
+
+        .page-title {
+            margin-bottom: 12px;
+            color: var(--accent);
+            font-family: "Jaro", sans-serif;
+            font-size: clamp(48px, 9vw, 88px);
+            font-weight: 400;
+            letter-spacing: 1px;
+            line-height: 0.95;
+        }
+
+        .page-subtitle {
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        .games-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .games-heading .page-title {
+            margin-bottom: 8px;
+        }
+
+        .games-heading .page-subtitle {
+            margin: 0;
+        }
+
+        .page-kicker {
+            margin-bottom: 10px;
+            color: var(--ink);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .games-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .game-search,
+        .game-filter {
+            height: 40px;
+            border: 1px solid rgba(151, 255, 164, 0.3);
+            border-radius: 9px;
+            background: rgba(7, 26, 18, 0.72);
+            color: var(--accent);
+            font: inherit;
+        }
+
+        .game-search {
+            width: 230px;
+            padding: 0 12px;
+        }
+
+        .game-filter {
+            padding: 0 10px;
+        }
+
+        .game-search:focus,
+        .game-filter:focus {
+            border-color: rgba(180, 255, 190, 0.85);
+            outline: 0;
+            box-shadow: 0 0 12px rgba(104, 222, 119, 0.2);
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(8, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 28px;
+            text-align: left;
+        }
+
+        .game-grid.is-empty {
+            display: block;
+            padding: 48px 20px;
+            border: 1px dashed rgba(151, 255, 164, 0.25);
+            border-radius: 14px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .game-link {
+            display: flex;
+            min-width: 0;
+            min-height: 184px;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(151, 255, 164, 0.3);
+            border-radius: 14px;
+            background: rgba(66, 126, 75, 0.16);
+            color: var(--accent);
+            text-decoration: none;
+            box-shadow: 0 0 10px rgba(104, 222, 119, 0.08);
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .game-cover {
+            display: block;
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            background: rgba(2, 14, 8, 0.7);
+        }
+
+        .game-card-body {
+            display: flex;
+            min-width: 0;
+            flex: 1;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 11px 12px 12px;
+        }
+
+        .game-link:hover {
+            transform: translateY(-3px);
+            border-color: rgba(180, 255, 190, 0.82);
+            background: rgba(115, 202, 126, 0.24);
+            box-shadow: 0 0 18px rgba(120, 238, 133, 0.3);
+        }
+
+        .game-link strong {
+            display: block;
+            overflow: hidden;
+            font-size: 13px;
+            line-height: 1.25;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .game-link span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        @media (max-width: 1200px) {
+            .game-grid {
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .games-header {
+                align-items: stretch;
+                flex-direction: column;
+                gap: 18px;
+            }
+
+            .games-controls {
+                flex-wrap: wrap;
+            }
+
+            .game-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 560px) {
+            .app-page {
+                padding-right: 14px;
+                padding-left: 14px;
+            }
+
+            .game-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .game-search {
+                flex: 1 1 100%;
+                width: 100%;
+            }
+
+            .game-link {
+                min-height: 190px;
+            }
+
+            .game-cover {
+                height: 108px;
+            }
+        }
+
+        .game-link.is-unavailable {
+            cursor: not-allowed;
+            opacity: 0.48;
+        }
+
+        .game-link.is-unavailable:hover {
+            transform: none;
+            border-color: rgba(151, 255, 164, 0.3);
+            background: rgba(66, 126, 75, 0.16);
+            box-shadow: 0 0 10px rgba(104, 222, 119, 0.08);
+        }
+
+        .apps-header {
+            margin-bottom: 26px;
+            text-align: left;
+        }
+
+        .apps-header .page-title {
+            margin-bottom: 8px;
+        }
+
+        .apps-header .page-subtitle {
+            margin: 0;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 14px;
+            text-align: left;
+        }
+
+        .app-link {
+            display: flex;
+            min-height: 112px;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            border: 1px solid rgba(151, 255, 164, 0.28);
+            border-radius: 14px;
+            background: rgba(66, 126, 75, 0.16);
+            color: var(--accent);
+            text-decoration: none;
+            box-shadow: 0 0 10px rgba(104, 222, 119, 0.06);
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .app-link:hover {
+            transform: translateY(-3px);
+            border-color: rgba(180, 255, 190, 0.82);
+            background: rgba(115, 202, 126, 0.24);
+            box-shadow: 0 0 18px rgba(120, 238, 133, 0.26);
+        }
+
+        .app-logo {
+            display: inline-flex;
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(180, 255, 190, 0.32);
+            border-radius: 11px;
+            background: rgba(7, 26, 18, 0.62);
+            color: var(--accent);
+            font-size: 22px;
+        }
+
+        .app-copy {
+            min-width: 0;
+        }
+
+        .app-copy strong,
+        .app-copy span {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .app-copy strong {
+            font-size: 14px;
+        }
+
+        .app-copy span {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        @media (max-width: 1200px) {
+            .app-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .app-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 560px) {
+            .app-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .app-link {
+                min-height: 94px;
+                gap: 9px;
+                padding: 11px;
+            }
+
+            .app-logo {
+                width: 34px;
+                height: 34px;
+                flex-basis: 34px;
+                font-size: 18px;
+            }
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .tab-bar,
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-bar {
+            min-height: 42px;
+            padding: 6px 10px 0;
+            border-bottom: 1px solid #1c1c20;
+        }
+
+        .tabs {
+            display: flex;
+            flex: 1;
+            align-items: stretch;
+            gap: 4px;
+            min-width: 0;
+            overflow-x: auto;
+        }
+
+        .tab {
+            display: flex;
+            flex: 0 1 190px;
+            align-items: center;
+            min-width: 100px;
+            max-width: 220px;
+            border: 1px solid transparent;
+            border-bottom: 0;
+            border-radius: 8px 8px 0 0;
+            background: #0b0b0d;
+        }
+
+        .tab.active {
+            border-color: var(--line);
+            background: #17171b;
+        }
+
+        .tab-select,
+        .tab-close,
+        .new-tab {
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+        }
+
+        .tab-select {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            padding: 8px 10px;
+            text-align: left;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tab.active .tab-select {
+            color: var(--ink);
+        }
+
+        .tab-close {
+            padding: 6px 9px;
+            font-size: 16px;
+        }
+
+        .tab-select:hover,
+        .tab-close:hover,
+        .new-tab:hover {
+            background: #26262c;
+            color: var(--ink);
+        }
+
+        .new-tab {
+            flex: 0 0 auto;
+            padding: 6px 12px;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .top-bar {
+            padding: 8px 10px;
+        }
+
+        .top-search {
+            flex: 1;
+            min-width: 0;
+            padding: 9px 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #08080a;
+        }
+
+        .top-search:focus {
+            border-color: #8a8a92;
+        }
+
+        button {
+            background: rgba(18, 31, 23, 0.9);
+            border: none;
+            color: var(--ink);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background: rgba(34, 51, 40, 0.95);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .bi {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .status {
+            padding: 4px 12px;
+            background: #16161a;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .browser-frames {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .browser-frame {
+            width: 100%;
+            flex: 1;
+            border: none;
+            background: #000000;
+        }
+
+        .browser-frame:not(.active) {
+            display: none;
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        @media (max-width: 560px) {
+            .home-main {
+                padding-bottom: 26vh;
+            }
+
+            .brand {
+                margin-bottom: 26px;
+            }
+
+            .search-wrap {
+                min-height: 52px;
+                padding-left: 14px;
+            }
+
+            .top-bar {
+                flex-wrap: wrap;
+            }
+
+            .top-search {
+                order: 2;
+                flex-basis: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <main class="home" id="home">
+            <div class="home-main">
+                <div class="home-content">
+                    <h1 class="brand">RAPTOR</h1>
+                    <div class="search-wrap">
+                        <input type="search" id="urlInput" name="proxy-search" aria-label="Search Brave or enter a URL" placeholder="Search Brave or enter a URL" value="" autocomplete="off" autocapitalize="none" spellcheck="false">
+                    </div>
+                </div>
+            </div>
+        </main>
+        <section class="app-page hidden" id="gamesPage" data-page-view="games" aria-labelledby="gamesTitle">
+            <div class="page-content">
+                <div class="games-header">
+                    <div class="games-heading">
+                        <p class="page-kicker">Raptor Arcade</p>
+                        <h1 class="page-title" id="gamesTitle">Games</h1>
+                        <p class="page-subtitle" id="gamesSubtitle">Loading the combined catalog...</p>
+                    </div>
+                    <div class="games-controls" aria-label="Game catalog controls">
+                        <input class="game-search" id="gameSearch" type="search" placeholder="Search games" aria-label="Search games">
+                        <select class="game-filter" id="gameSourceFilter" aria-label="Filter by source">
+                            <option value="all">All sources</option>
+                            <option value="selenite">Selenite</option>
+                            <option value="nate">Nate</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="game-grid" id="gameGrid"></div>
+            </div>
+        </section>
+        <section class="app-page hidden" id="appsPage" data-page-view="apps" aria-labelledby="appsTitle">
+            <div class="page-content">
+                <div class="apps-header">
+                    <p class="page-kicker">Quick Launch</p>
+                    <h1 class="page-title" id="appsTitle">Apps</h1>
+                    <p class="page-subtitle">Open a service in the RAPTOR browser.</p>
+                </div>
+                <div class="app-grid">
+                    <a class="app-link" href="https://github.com" data-app-url="https://github.com"><span class="app-logo"><i class="bi bi-github"></i></span><span class="app-copy"><strong>GitHub</strong><span>Code and projects</span></span></a>
+                    <a class="app-link" href="https://www.youtube.com" data-app-url="https://www.youtube.com"><span class="app-logo"><i class="bi bi-youtube"></i></span><span class="app-copy"><strong>YouTube</strong><span>Videos and creators</span></span></a>
+                    <a class="app-link" href="https://discord.com/app" data-app-url="https://discord.com/app"><span class="app-logo"><i class="bi bi-discord"></i></span><span class="app-copy"><strong>Discord</strong><span>Communities and chat</span></span></a>
+                    <a class="app-link" href="https://www.reddit.com" data-app-url="https://www.reddit.com"><span class="app-logo"><i class="bi bi-reddit"></i></span><span class="app-copy"><strong>Reddit</strong><span>Communities and posts</span></span></a>
+                    <a class="app-link" href="https://x.com" data-app-url="https://x.com"><span class="app-logo"><i class="bi bi-twitter-x"></i></span><span class="app-copy"><strong>X</strong><span>Posts and conversations</span></span></a>
+                    <a class="app-link" href="https://www.instagram.com" data-app-url="https://www.instagram.com"><span class="app-logo"><i class="bi bi-instagram"></i></span><span class="app-copy"><strong>Instagram</strong><span>Photos and messages</span></span></a>
+                    <a class="app-link" href="https://open.spotify.com" data-app-url="https://open.spotify.com"><span class="app-logo"><i class="bi bi-spotify"></i></span><span class="app-copy"><strong>Spotify</strong><span>Music and podcasts</span></span></a>
+                    <a class="app-link" href="https://www.twitch.tv" data-app-url="https://www.twitch.tv"><span class="app-logo"><i class="bi bi-twitch"></i></span><span class="app-copy"><strong>Twitch</strong><span>Live streams</span></span></a>
+                    <a class="app-link" href="https://www.google.com" data-app-url="https://www.google.com"><span class="app-logo"><i class="bi bi-google"></i></span><span class="app-copy"><strong>Google</strong><span>Search the web</span></span></a>
+                    <a class="app-link" href="https://mail.google.com" data-app-url="https://mail.google.com"><span class="app-logo"><i class="bi bi-envelope-fill"></i></span><span class="app-copy"><strong>Gmail</strong><span>Email and inbox</span></span></a>
+                    <a class="app-link" href="https://drive.google.com" data-app-url="https://drive.google.com"><span class="app-logo"><i class="bi bi-cloud-fill"></i></span><span class="app-copy"><strong>Google Drive</strong><span>Files and documents</span></span></a>
+                    <a class="app-link" href="https://docs.google.com" data-app-url="https://docs.google.com"><span class="app-logo"><i class="bi bi-file-earmark-text-fill"></i></span><span class="app-copy"><strong>Google Docs</strong><span>Online documents</span></span></a>
+                    <a class="app-link" href="https://en.wikipedia.org" data-app-url="https://en.wikipedia.org"><span class="app-logo"><i class="bi bi-wikipedia"></i></span><span class="app-copy"><strong>Wikipedia</strong><span>Open knowledge</span></span></a>
+                    <a class="app-link" href="https://stackoverflow.com" data-app-url="https://stackoverflow.com"><span class="app-logo"><i class="bi bi-stack-overflow"></i></span><span class="app-copy"><strong>Stack Overflow</strong><span>Developer answers</span></span></a>
+                    <a class="app-link" href="https://codepen.io" data-app-url="https://codepen.io"><span class="app-logo"><i class="bi bi-code-slash"></i></span><span class="app-copy"><strong>CodePen</strong><span>Frontend experiments</span></span></a>
+                    <a class="app-link" href="https://www.canva.com" data-app-url="https://www.canva.com"><span class="app-logo"><i class="bi bi-palette-fill"></i></span><span class="app-copy"><strong>Canva</strong><span>Design tools</span></span></a>
+                    <a class="app-link" href="https://chatgpt.com" data-app-url="https://chatgpt.com"><span class="app-logo"><i class="bi bi-chat-square-text-fill"></i></span><span class="app-copy"><strong>ChatGPT</strong><span>AI assistant</span></span></a>
+                    <a class="app-link" href="https://www.notion.so" data-app-url="https://www.notion.so"><span class="app-logo"><i class="bi bi-journal-text"></i></span><span class="app-copy"><strong>Notion</strong><span>Notes and workspace</span></span></a>
+                    <a class="app-link" href="https://news.ycombinator.com" data-app-url="https://news.ycombinator.com"><span class="app-logo"><i class="bi bi-newspaper"></i></span><span class="app-copy"><strong>Hacker News</strong><span>Tech community</span></span></a>
+                    <a class="app-link" href="https://www.linkedin.com" data-app-url="https://www.linkedin.com"><span class="app-logo"><i class="bi bi-linkedin"></i></span><span class="app-copy"><strong>LinkedIn</strong><span>Professional network</span></span></a>
+                    <a class="app-link" href="https://www.amazon.com" data-app-url="https://www.amazon.com"><span class="app-logo"><i class="bi bi-cart-fill"></i></span><span class="app-copy"><strong>Amazon</strong><span>Shopping</span></span></a>
+                    <a class="app-link" href="https://www.netflix.com" data-app-url="https://www.netflix.com"><span class="app-logo"><i class="bi bi-film"></i></span><span class="app-copy"><strong>Netflix</strong><span>Shows and movies</span></span></a>
+                    <a class="app-link" href="https://translate.google.com" data-app-url="https://translate.google.com"><span class="app-logo"><i class="bi bi-translate"></i></span><span class="app-copy"><strong>Translate</strong><span>Language tools</span></span></a>
+                    <a class="app-link" href="https://calendar.google.com" data-app-url="https://calendar.google.com"><span class="app-logo"><i class="bi bi-calendar3"></i></span><span class="app-copy"><strong>Calendar</strong><span>Schedules and events</span></span></a>
+                </div>
+            </div>
+        </section>
+        <section class="app-page hidden" id="settingsPage" data-page-view="settings" aria-labelledby="settingsTitle">
+            <div class="page-content">
+                <h1 class="page-title" id="settingsTitle">Settings</h1>
+                <p class="page-subtitle">Settings page ready for content.</p>
+            </div>
+        </section>
+        <div class="dock" aria-label="Floating dock">
+            <button class="dock-btn is-active" type="button" data-page="home" aria-label="Globe"><i class="bi bi-globe2"></i></button>
+            <button class="dock-btn" type="button" data-page="games" aria-label="Games"><i class="bi bi-controller"></i></button>
+            <button class="dock-btn" type="button" data-page="apps" aria-label="Apps"><i class="bi bi-grid-3x3-gap-fill"></i></button>
+            <button class="dock-btn" type="button" data-page="settings" aria-label="Settings"><i class="bi bi-gear"></i></button>
+        </div>
+        <div class="toolbar" id="toolbar">
+            <div class="tab-bar">
+                <div class="tabs" id="tabs" role="tablist" aria-label="Open tabs"></div>
+                <button class="new-tab" id="newTabBtn" type="button" title="New tab" aria-label="New tab"><i class="bi bi-plus-circle-fill"></i></button>
+            </div>
+            <div class="top-bar">
+                <div class="nav-buttons">
+                    <button id="backBtn" title="Back" aria-label="Back"><i class="bi bi-chevron-left"></i></button>
+                    <button id="forwardBtn" title="Forward" aria-label="Forward"><i class="bi bi-chevron-right"></i></button>
+                    <button id="reloadBtn" title="Reload" aria-label="Reload"><i class="bi bi-arrow-clockwise"></i></button>
+                </div>
+                <input class="top-search" type="search" id="toolbarUrlInput" name="proxy-toolbar-search" aria-label="Search Brave or enter a URL" placeholder="Search Brave or enter a URL" autocomplete="off" autocapitalize="none" spellcheck="false">
+            </div>
+        </div>
+        <div class="browser-frames hidden" id="browserFrames">
+            <iframe id="browserFrame" class="browser-frame active" title="Scramjet Browser"></iframe>
+        </div>
+    </div>
+    <!--
+        STEP 1: Load the libraries. Keep these as plain <script> tags. Do not turn
+        them into type="module" / imports. They put their API on the global object
+        (window.$scramjet, window.$scramjetController, window.EpoxyTransport), and
+        that only happens in a classic script.
+
+        scramjet/ and controller/ need to live at your site root. The service worker
+        loads scramjet.js and scramjet.wasm from /scramjet/ and the inject script
+        from /controller/, so keep those paths unless you also change the controller
+        config.
+    -->
+    <script>
+        (async () => {
+            const gameGrid = document.getElementById("gameGrid");
+            const gamesSubtitle = document.getElementById("gamesSubtitle");
+            const gameSearch = document.getElementById("gameSearch");
+            const gameSourceFilter = document.getElementById("gameSourceFilter");
+            if (!gameGrid || !gamesSubtitle) return;
+
+            try {
+                const response = await fetch("/api/games");
+                if (!response.ok) throw new Error(`Catalog request failed: ${response.status}`);
+                const catalog = await response.json();
+
+                const renderCatalog = () => {
+                    const query = gameSearch.value.trim().toLowerCase();
+                    const source = gameSourceFilter.value;
+                    const filtered = catalog
+                        .filter(game => !query || game.name.toLowerCase().includes(query))
+                        .filter(game => source === "all" || game.source === source)
+                        .sort((left, right) => left.name.localeCompare(right.name));
+                    const fragment = document.createDocumentFragment();
+
+                    filtered.forEach(game => {
+                        const link = document.createElement("a");
+                        link.className = "game-link";
+                        if (!game.available || !game.url) {
+                            link.classList.add("is-unavailable");
+                            link.setAttribute("aria-disabled", "true");
+                        } else {
+                            link.href = game.url;
+                        }
+                        if (game.image) {
+                            const cover = document.createElement("img");
+                            cover.className = "game-cover";
+                            cover.alt = `${game.name} cover`;
+                            cover.loading = "lazy";
+                            cover.src = game.image;
+                            link.appendChild(cover);
+                        }
+                        const body = document.createElement("div");
+                        body.className = "game-card-body";
+                        const title = document.createElement("strong");
+                        title.textContent = game.name;
+                        const meta = document.createElement("span");
+                        meta.textContent = game.available ? game.source : "Unavailable";
+                        body.append(title, meta);
+                        link.appendChild(body);
+                        fragment.appendChild(link);
+                    });
+
+                    gameGrid.classList.toggle("is-empty", filtered.length === 0);
+                    gameGrid.replaceChildren(fragment);
+                    gamesSubtitle.textContent = `${filtered.length} of ${catalog.length} games · Selenite + Nate`;
+                };
+
+                [gameSearch, gameSourceFilter].forEach(control => control.addEventListener("input", renderCatalog));
+                renderCatalog();
+            } catch (error) {
+                gamesSubtitle.textContent = "The games catalog could not be loaded.";
+                console.error(error);
+            }
+        })();
+    </script>
+    <script src="/scramjet/scramjet.js"></script>
+    <script src="/controller/controller.api.js"></script>
+    <!-- Epoxy is the network transport. Drop in a local copy if you don't want the CDN. -->
+    <script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@3.0.1/dist/index.js"></script>
+
+    <script>
+        // STEP 2: Pull the classes off the globals the scripts above set up.
+        const { Controller } = $scramjetController;
+        const { defaultConfig } = $scramjet;
+        const EpoxyTransport = self.EpoxyTransport.default;
+
+        const urlInput = document.getElementById("urlInput");
+        const toolbarUrlInput = document.getElementById("toolbarUrlInput");
+        const home = document.getElementById("home");
+        const toolbar = document.getElementById("toolbar");
+        const browserFrames = document.getElementById("browserFrames");
+        const tabsEl = document.getElementById("tabs");
+        const pageViews = [...document.querySelectorAll("[data-page-view]")];
+        const dockButtons = [...document.querySelectorAll("[data-page]")];
+        const gameGrid = document.getElementById("gameGrid");
+        const gamesSubtitle = document.getElementById("gamesSubtitle");
+        const validPages = new Set(["home", "games", "apps", "settings"]);
+
+        let scramjet = null;
+        let activeTab = null;
+        let tabs = [];
+        let nextTabId = 1;
+        let currentPage = "home";
+
+        function showPage(pageName, updateHash = true) {
+            const page = validPages.has(pageName) ? pageName : "home";
+            currentPage = page;
+
+            home.classList.toggle("hidden", page !== "home");
+            toolbar.classList.toggle("hidden", page !== "home");
+            browserFrames.classList.add("hidden");
+            document.querySelector(".dock").classList.remove("is-hidden");
+            pageViews.forEach(view => {
+                view.classList.toggle("hidden", view.dataset.pageView !== page);
+            });
+            dockButtons.forEach(button => {
+                button.classList.toggle("is-active", button.dataset.page === page);
+            });
+
+            if (updateHash) history.pushState(null, "", page === "home" ? "/" : `/${page}`);
+        }
+
+        dockButtons.forEach(button => {
+            button.addEventListener("click", () => showPage(button.dataset.page));
+        });
+
+        window.addEventListener("popstate", () => {
+            showPage(location.pathname.slice(1), false);
+        });
+
+        showPage(location.pathname.slice(1) || "home", false);
+
+        function destination(value) {
+            const input = value.trim();
+
+            if (/^(https?:\/\/|www\.)/i.test(input) || /^[^\s/]+\.[^\s/]+(?:\/.*)?$/.test(input)) {
+                return /^https?:\/\//i.test(input) ? input : "https://" + input;
+            }
+
+            return "https://search.brave.com/search?q=" + encodeURIComponent(input);
+        }
+
+        async function init() {
+            try {
+                // Wait for the service worker (registered at the bottom) to be active.
+                await navigator.serviceWorker.ready;
+
+                const serviceworker =
+                    navigator.serviceWorker.controller ??
+                    (await navigator.serviceWorker.ready).active;
+
+                // STEP 3: Connect a transport to a wisp server.
+                // Use your own wisp server in production. Public ones get
+                // rate-limited and can go offline.
+                const transport = new EpoxyTransport({
+                    wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/`
+                });
+
+                await transport.init();
+
+                // STEP 4: Create the controller. defaultConfig is fine to start with;
+                // change it if you need custom rewriting behaviour.
+                scramjet = new Controller({
+                    serviceworker,
+                    transport,
+                    scramjetConfig: defaultConfig
+                });
+
+                await scramjet.wait();
+                createTab();
+                showPage(currentPage, false);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function createTab() {
+            const iframe = tabs.length === 0
+                ? document.getElementById("browserFrame")
+                : document.createElement("iframe");
+
+            iframe.className = "browser-frame";
+            iframe.title = "Proxy tab";
+            if (tabs.length > 0) browserFrames.appendChild(iframe);
+
+            const tab = {
+                id: nextTabId++,
+                title: "New tab",
+                url: "",
+                iframe,
+                frame: scramjet.createFrame(iframe)
+            };
+
+            tabs.push(tab);
+            activateTab(tab);
+            return tab;
+        }
+
+        function activateTab(tab) {
+            activeTab = tab;
+            tabs.forEach(item => {
+                item.iframe.classList.toggle("active", item === tab);
+            });
+            toolbarUrlInput.value = tab.url;
+            if (!tab.url) urlInput.value = "";
+            home.classList.toggle("hidden", Boolean(tab.url));
+            browserFrames.classList.toggle("hidden", !tab.url);
+            renderTabs();
+        }
+
+        function renderTabs() {
+            tabsEl.replaceChildren(...tabs.map(tab => {
+                const element = document.createElement("div");
+                const select = document.createElement("button");
+                const close = document.createElement("button");
+
+                element.className = "tab" + (tab === activeTab ? " active" : "");
+                element.setAttribute("role", "tab");
+                select.className = "tab-select";
+                select.type = "button";
+                select.textContent = tab.title;
+                select.title = tab.url || "New tab";
+                select.onclick = () => activateTab(tab);
+                close.className = "tab-close";
+                close.type = "button";
+                close.innerHTML = '<i class="bi bi-x-circle-fill"></i>';
+                close.title = "Close tab";
+                close.setAttribute("aria-label", "Close " + tab.title);
+                close.onclick = event => {
+                    event.stopPropagation();
+                    closeTab(tab);
+                };
+                element.append(select, close);
+                return element;
+            }));
+        }
+
+        function closeTab(tab) {
+            const index = tabs.indexOf(tab);
+            if (index < 0) return;
+
+            const wasActive = tab === activeTab;
+            tab.iframe.remove();
+            tabs.splice(index, 1);
+            if (tabs.length === 0) {
+                createTab();
+                return;
+            }
+
+            activateTab(wasActive ? tabs[Math.max(0, index - 1)] : activeTab);
+        }
+
+        // Navigate the active tab using a URL or a Brave search.
+        function go(value, source) {
+            if (!value.trim()) return;
+
+            const url = destination(value);
+            currentPage = "browser";
+            document.querySelector(".dock").classList.add("is-hidden");
+            pageViews.forEach(view => view.classList.add("hidden"));
+            dockButtons.forEach(button => button.classList.remove("is-active"));
+            toolbarUrlInput.value = url;
+            if (source === "home") urlInput.value = url;
+            toolbar.classList.remove("hidden");
+            home.classList.add("hidden");
+            browserFrames.classList.remove("hidden");
+            if (!activeTab) createTab();
+            activeTab.url = url;
+            activeTab.title = new URL(url).hostname.replace(/^www\./, "") || "New tab";
+            activeTab.frame.go(url);
+            renderTabs();
+        }
+
+        document.querySelectorAll("[data-app-url]").forEach(app => {
+            app.addEventListener("click", event => {
+                event.preventDefault();
+                go(app.dataset.appUrl, "toolbar");
+            });
+        });
+
+        urlInput.addEventListener("keydown", e => {
+            if (e.key === "Enter") go(urlInput.value, "home");
+        });
+
+        toolbarUrlInput.addEventListener("keydown", e => {
+            if (e.key === "Enter") go(toolbarUrlInput.value, "toolbar");
+        });
+
+        document.getElementById("newTabBtn").onclick = () => {
+            toolbar.classList.remove("hidden");
+            document.querySelector(".dock").classList.remove("is-hidden");
+            createTab();
+            urlInput.focus();
+        };
+
+        window.addEventListener("pageshow", () => {
+            if (!toolbar.classList.contains("hidden")) return;
+            urlInput.value = "";
+            toolbarUrlInput.value = "";
+        });
+
+        window.addEventListener("load", async () => {
+            if (document.fonts?.ready) await document.fonts.ready;
+            document.body.classList.add("is-ready");
+        });
+
+        // STEP 6: Register the service worker, then boot once it's ready.
+        // Service workers only run in a secure context: https:// or http://localhost.
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/sw.js").then(init);
+        } else {
+            setStatus("No service worker support", true);
+        }
+    </script>
+</body>
+
+</html>
